@@ -60,17 +60,6 @@ class Ui_MainWindow(QMainWindow):
         ################  Save Grid  ################
         self.createSaveLayout()
 
-        #widget setup
-        # self.widget = QtWidgets.QWidget(self.centralwidget)
-        # sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
-        # sizePolicy.setHorizontalStretch(1)
-        # sizePolicy.setVerticalStretch(1)
-        # sizePolicy.setHeightForWidth(self.widget.sizePolicy().hasHeightForWidth())
-        # self.widget.setSizePolicy(sizePolicy)
-        # self.widget.setMinimumSize(QtCore.QSize(700, 700))
-        # self.widget.setObjectName("widget")
-        # self.gridLayout.addWidget(self.widget, 0, 1, 1, 1)
-
         #vtk grid
         self.vtkGridWidget = QtWidgets.QWidget(self.centralwidget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
@@ -366,6 +355,9 @@ class Ui_MainWindow(QMainWindow):
 
     def selectMRIDirectory(self):
         dirName = QFileDialog.getExistingDirectory(self, 'Open MRI Directory', "")
+        self.controller.setMRIDirectory(dirName)
+        self.controller.executeReader("MRI")
+
         self.controller.setMRIDirectory(dirName)
         self.controller.executeReader("MRI")
 
