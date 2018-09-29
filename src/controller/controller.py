@@ -31,7 +31,7 @@ class Controller(object):
         self.szeReader.setFilePath(surface)
         print("Setting Surface path: "+self.szeReader.filepath)
 
-        def executeReader(self, type):
+    def executeReader(self, type):
         if type is "XRay":
             print("Getting X-Ray data...")
             self.xray_actor = self.wrlReader.getVTKActor()
