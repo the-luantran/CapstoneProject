@@ -282,6 +282,7 @@ class Ui_MainWindow(QMainWindow):
     def selectMRIDirectory(self):
         dirName = QFileDialog.getExistingDirectory(self, 'Open MRI Directory', "")
         self.controller.setMRIDirectory(dirName)
+        self.controller.executeReader("MRI")
 
     def selectXRayFile(self):
         filename = QFileDialog.getOpenFileName(self, 'Open XRay File', "")

@@ -18,6 +18,7 @@ class Controller(object):
         self.registration = registration.Registration()
         self.xray_actor = None
         self.surface_actor = None
+        self.mri_actor = None
 
     def setMRIDirectory(self, mriDirectory):
         self.mriReader.setFilePath(mriDirectory)
@@ -30,7 +31,7 @@ class Controller(object):
         self.szeReader.setFilePath(surface)
         print("Setting Surface path: "+self.szeReader.filepath)
 
-    def executeReader(self, type):
+        def executeReader(self, type):
         if type is "XRay":
             print("Getting X-Ray data...")
             self.xray_actor = self.wrlReader.getVTKActor()
@@ -47,8 +48,10 @@ class Controller(object):
 
         elif type is "MRI":
             print("Getting MRI data...")
-            self.mriReader.getPolyData()
-
+            self.mri_actor = self.mriReader.getVTKActor()
+            self.view.ren.AddActor(self.mri_actor)
+            self.view.ren.ResetCamera()
+            self.view.vtkWidget.Render()
 
     def register(self):
         print("Registering...")
