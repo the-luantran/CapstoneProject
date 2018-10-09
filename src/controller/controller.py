@@ -15,6 +15,9 @@ class Controller(object):
         self.wrlReader = wrlReader.WRLReader()
         self.szeReader = szeReader.SZEReader()
         self.mriReader = mriReader.MRIReader()
+        self.setWRL = False
+        self.setSurface = False
+        self.setMRI = False
         self.registration = registration.Registration()
         self.xray_actor = None
         self.surface_actor = None
@@ -22,14 +25,15 @@ class Controller(object):
 
     def setMRIDirectory(self, mriDirectory):
         self.mriReader.setFilePath(mriDirectory)
+        self.setMRI = True
 
     def setXRay(self, xray):
         self.wrlReader.setFilePath(xray)
-        print("Setting X-Ray path: "+self.wrlReader.filepath)
+        self.setWRL = True
 
     def setSurface(self, surface):
         self.szeReader.setFilePath(surface)
-        print("Setting Surface path: "+self.szeReader.filepath)
+        self.setSurface = True
 
     def executeReader(self, type):
         if type is "XRay":
