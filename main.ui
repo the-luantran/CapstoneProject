@@ -8,6 +8,7 @@
     <y>0</y>
     <width>1142</width>
     <height>960</height>
+
    </rect>
   </property>
   <property name="windowTitle">
@@ -247,6 +248,7 @@
       </item>
       <item>
        <layout class="QVBoxLayout" name="verticalLayout_6" stretch="0,0,0">
+
         <property name="sizeConstraint">
          <enum>QLayout::SetMinimumSize</enum>
         </property>
@@ -268,6 +270,7 @@
          </layout>
         </item>
         <item>
+
          <widget class="QLabel" name="saveLabel">
           <property name="enabled">
            <bool>true</bool>
@@ -354,6 +357,7 @@
      <x>0</x>
      <y>0</y>
      <width>1142</width>
+
      <height>25</height>
     </rect>
    </property>

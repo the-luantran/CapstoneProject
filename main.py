@@ -150,6 +150,7 @@ class Ui_MainWindow(object):
         self.horizontalScrollBar.setObjectName(_fromUtf8("horizontalScrollBar"))
         self.horizontalLayout_2.addWidget(self.horizontalScrollBar)
         self.verticalLayout_6.addLayout(self.horizontalLayout_2)
+
         self.saveLabel = QtGui.QLabel(self.centralwidget)
         self.saveLabel.setEnabled(True)
         font = QtGui.QFont()
@@ -181,6 +182,7 @@ class Ui_MainWindow(object):
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtGui.QMenuBar(MainWindow)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 1142, 25))
+
         self.menubar.setObjectName(_fromUtf8("menubar"))
         self.menuFile = QtGui.QMenu(self.menubar)
         self.menuFile.setObjectName(_fromUtf8("menuFile"))

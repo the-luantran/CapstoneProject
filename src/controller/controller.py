@@ -35,6 +35,7 @@ class Controller(object):
         self.szeReader.setFilePath(surface)
         self.setST = True
 
+
     def executeReader(self, type):
         if type is "XRay":
             print("Getting X-Ray data...")

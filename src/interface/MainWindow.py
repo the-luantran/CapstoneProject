@@ -291,7 +291,6 @@ class Ui_MainWindow(QMainWindow):
         self.spacerItem2 = QtWidgets.QSpacerItem(40, 10, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.viewLayout.addItem(self.spacerItem2)
 
-
         # Slice Label
         self.sliceLabel = QtWidgets.QLabel(self.centralwidget)
         self.sliceLabel.setObjectName("sliceLabel")
@@ -358,12 +357,6 @@ class Ui_MainWindow(QMainWindow):
 
     def selectMRIDirectory(self):
         dirName = QFileDialog.getExistingDirectory(self, 'Open MRI Directory', "")
-        self.controller.setMRIDirectory(dirName)
-        self.controller.executeReader("MRI")
-
-        self.controller.setMRIDirectory(dirName)
-        self.controller.executeReader("MRI")
-
         if dirName:
             errorStatus = False
             for root, dirs, files in walk(dirName):
@@ -374,7 +367,6 @@ class Ui_MainWindow(QMainWindow):
                         if file.rsplit('.', 1)[1] != type:
                             errorStatus = True
                     break
-
             if errorStatus:
                 msgBox = QtWidgets.QMessageBox()
                 msgBox.setText("Error: The selected directory contains non-MRI files")
@@ -385,7 +377,6 @@ class Ui_MainWindow(QMainWindow):
                 self.sliceSpinBox.setEnabled(True)
                 self.sliceSpinBox.setProperty("value", 0)
                 self.currentSliceValue = self.sliceSpinBox.value()
-
         else:
             self.mriLoadText.setText("No MRI directory selected...")
 
@@ -421,10 +412,8 @@ class Ui_MainWindow(QMainWindow):
         ui = HelpWindow.Ui_Dialog()
         ui.setupUi(dialog)
         dialog.exec()
-
-
+   
     def changeSlice(self):
-
         if self.sliceSpinBox.value() > self.currentSliceValue:
             delta = self.sliceSpinBox.value() - self.currentSliceValue
             self.currentSliceValue = self.sliceSpinBox.value()
@@ -455,7 +444,6 @@ class Ui_MainWindow(QMainWindow):
         matrix.SetElement(1, 3, center[1])
         matrix.SetElement(2, 3, center[2])
         self.vtkWidget.Render()
-
     def register(self):
         self.controller.register()
 
