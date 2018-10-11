@@ -14,54 +14,69 @@ class MRIReader(reader.Reader):
         super().setFilePath(filepath)
 
     def getPolyData(self):
-        self.polydata = vtk.vtkPolyData()
-        PathDicom = "/home/luantran/Pictures/mri/"
+        return
+
+    def getVTKActor(self):
         reader = vtk.vtkDICOMImageReader()
         reader.SetDirectoryName(self.filepath)
         reader.Update()
 
-        # Load dimensions using `GetDataExtent`
-        _extent = reader.GetDataExtent()
-        ConstPixelDims = [_extent[1] - _extent[0] + 1, _extent[3] - _extent[2] + 1, _extent[5] - _extent[4] + 1]
+        # Calculate the center of the volume
+        xMin, xMax, yMin, yMax, zMin, zMax = reader.GetDataExtent()
 
-        # Load spacing values
-        ConstPixelSpacing = reader.GetPixelSpacing()
+        self.max_number_of_slices = zMax
 
-        x = numpy.arange(0.0, (ConstPixelDims[0] + 1) * ConstPixelSpacing[0], ConstPixelSpacing[0])
-        y = numpy.arange(0.0, (ConstPixelDims[1] + 1) * ConstPixelSpacing[1], ConstPixelSpacing[1])
-        z = numpy.arange(0.0, (ConstPixelDims[2] + 1) * ConstPixelSpacing[2], ConstPixelSpacing[2])
+        xSpacing, ySpacing, zSpacing = reader.GetOutput().GetSpacing()
+        x0, y0, z0 = reader.GetOutput().GetOrigin()
+        center = [x0 + xSpacing * 0.5 * (xMin + xMax),
+                  y0 + ySpacing * 0.5 * (yMin + yMax),
+                  z0 + zSpacing * 0.5 * (zMin + zMax)]
 
-        # Get the 'vtkImageData' object from the reader
-        imageData = reader.GetOutput()
-        # Get the 'vtkPointData' object from the 'vtkImageData' object
-        pointData = imageData.GetPointData()
-        # Ensure that only one array exists within the 'vtkPointData' object
-        assert (pointData.GetNumberOfArrays() == 1)
-        # Get the `vtkArray` (or whatever derived type) which is needed for the `numpy_support.vtk_to_numpy` function
-        arrayData = pointData.GetArray(0)
+        # Matrices for axial, coronal, sagittal, oblique view orientations
+        center= [0,0,0]
+        axial = vtk.vtkMatrix4x4()
+        axial.DeepCopy((1, 0, 0, center[0],
+                        0, 1, 0, center[1],
+                        0, 0, 1, center[2],
+                        0, 0, 0, 1))
 
-        # Convert the `vtkArray` to a NumPy array
-        ArrayDicom = numpy_support.vtk_to_numpy(arrayData)
-        # Reshape the NumPy array to 3D using 'ConstPixelDims' as a 'shape'
-        ArrayDicom = ArrayDicom.reshape(ConstPixelDims, order='F')
-        pyplot.subplot(111)
-        pyplot.axes().set_aspect('equal', 'datalim')
-        pyplot.set_cmap(pyplot.gray())
-        pyplot.pcolormesh(x, y, numpy.flipud(numpy.rot90(ArrayDicom[:, :, 0])))
-        pyplot.show()
+        # coronal = vtk.vtkMatrix4x4()
+        # coronal.DeepCopy((1, 0, 0, center[0],
+        #                   0, 0, 1, center[1],
+        #                   0, -1, 0, center[2],
+        #                   0, 0, 0, 1))
+        #
+        # sagittal = vtk.vtkMatrix4x4()
+        # sagittal.DeepCopy((0, 0, -1, center[0],
+        #                    1, 0, 0, center[1],
+        #                    0, -1, 0, center[2],
+        #                    0, 0, 0, 1))
 
-        pyplot.subplot(211)
+        # Extract a slice in the desired orientation
+        self.reslice = vtk.vtkImageReslice()
+        self.reslice.SetInputConnection(reader.GetOutputPort())
+        self.reslice.SetOutputDimensionality(2)
+        self.reslice.SetResliceAxes(axial)
+        self.reslice.SetInterpolationModeToCubic()
+        # self.reslice.SetOutputExtent(xMin, xMax, yMin, yMax, zMin, zMax)
+        # self.reslice.SetOutputOrigin(0,0,0)
+        # self.reslice.SetScalarShift(10)
 
-        pyplot.axes().set_aspect('equal', 'datalim')
-        pyplot.set_cmap(pyplot.gray())
+        # Create a greyscale lookup table
+        table = vtk.vtkLookupTable()
+        table.SetRange(0, 2000)  # image intensity range
+        table.SetValueRange(0.0, 5.0)  # from black to white
+        table.SetSaturationRange(0.0, 0.0)  # no color saturation
+        table.SetRampToLinear()
+        table.Build()
 
-        pyplot.pcolormesh(x, y, numpy.flipud(numpy.rot90(ArrayDicom[:, :, 1])))
-        pyplot.show()
-        return self.polydata
+        # Map the image through the lookup table
+        color = vtk.vtkImageMapToColors()
+        color.SetLookupTable(table)
+        color.SetInputConnection(self.reslice.GetOutputPort())
 
-    def getVTKActor(self):
-        self.actor = vtk.vtkActor()
-        mapper = vtk.vtkPolyDataMapper()
-        mapper.SetInputData(self.getPolyData())
-        self.actor.SetMapper(mapper)
-        return self.actor
+        # Display the image
+        actor = vtk.vtkImageActor()
+        actor.GetMapper().SetInputConnection(color.GetOutputPort())
+
+        return actor

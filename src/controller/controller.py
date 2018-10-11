@@ -16,11 +16,12 @@ class Controller(object):
         self.szeReader = szeReader.SZEReader()
         self.mriReader = mriReader.MRIReader()
         self.setWRL = False
-        self.setSurface = False
+        self.setST = False
         self.setMRI = False
         self.registration = registration.Registration()
         self.xray_actor = None
         self.surface_actor = None
+        self.mri_actor = None
 
     def setMRIDirectory(self, mriDirectory):
         self.mriReader.setFilePath(mriDirectory)
@@ -32,7 +33,8 @@ class Controller(object):
 
     def setSurface(self, surface):
         self.szeReader.setFilePath(surface)
-        self.setSurface = True
+        self.setST = True
+
 
     def executeReader(self, type):
         if type is "XRay":
@@ -51,8 +53,13 @@ class Controller(object):
 
         elif type is "MRI":
             print("Getting MRI data...")
-            self.mriReader.getPolyData()
-
+            self.mri_actor = self.mriReader.getVTKActor()
+            self.view.ren.AddActor(self.mri_actor)
+            self.view.sliceSpinBox.setMaximum(self.mriReader.max_number_of_slices)
+            self.view.sliceSpinBox.setSuffix(" of 175")
+            self.view.sliceSpinBox.setPrefix("Slice ")
+            self.view.ren.ResetCamera()
+            self.view.vtkWidget.Render()
 
     def register(self):
         print("Registering...")
