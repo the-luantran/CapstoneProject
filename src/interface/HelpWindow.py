@@ -30,5 +30,5 @@ class Ui_Dialog(object):
         QtCore.QMetaObject.connectSlotsByName(Dialog)
 
     def retranslateUi(self, Dialog):
-        Dialog.setWindowTitle("Dialog", "Dialog", None)
+        Dialog.setWindowTitle("Dialog")
 
