@@ -257,10 +257,10 @@ class Ui_MainWindow(QMainWindow):
 
         #Rigid Registration Button
         self.rigidRegistrationButton = QtWidgets.QPushButton(self.centralwidget)
-        self.rigidRegistrationButton.setEnabled(False)
+        self.rigidRegistrationButton.setEnabled(True)
         self.rigidRegistrationButton.setObjectName("rigidRegistrationButton")
         self.registrationLayout.addWidget(self.rigidRegistrationButton)
-        self.rigidRegistrationButton.clicked.connect(self.register)
+        self.rigidRegistrationButton.clicked.connect(self.selectRigitRegister)
 
         #Articulated Registration Button
         self.articulatedRegistrationButton = QtWidgets.QPushButton(self.centralwidget)
@@ -565,7 +565,7 @@ class Ui_MainWindow(QMainWindow):
         matrix.SetElement(2, 3, center[2])
         self.vtkWidget.Render()
 
-    def register(self):
-        self.controller.register()
+    def selectRigitRegister(self):
+        self.controller.performRigitRegistration()
 
 
